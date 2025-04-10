@@ -1,0 +1,93 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>IndexedDB: Пример с транзакцией</title>
+</head>
+<body>
+<h1>IndexedDB: Работа с транзакциями</h1>
+<button id="transactionExample">Выполнить транзакцию</button>
+
+<script>
+    // Глобальная переменная для хранения ссылки на базу данных
+    let db;
+
+    // 1) Открываем (или создаём) базу данных "TransactionDB" версии 1.
+    // Если БД ещё не существует, она будет создана, а далее сразу запустится onupgradeneeded.
+    const openRequest = indexedDB.open("TransactionDB", 1);
+
+    // 2) Обрабатываем ошибки при открытии
+    openRequest.onerror = function(event) {
+        console.error("Ошибка при открытии базы данных:", event);
+    };
+
+    // 3) onupgradeneeded вызывается при создании новой БД или повышении версии.
+    openRequest.onupgradeneeded = function(event) {
+        const db = event.target.result;
+
+        // Проверяем, существует ли уже объектное хранилище с названием "notes"
+        if (!db.objectStoreNames.contains("notes")) {
+            // Создаём новое объектное хранилище (аналог таблицы).
+            // Указываем, что ключ - это поле "id".
+            db.createObjectStore("notes", { keyPath: "id" });
+        }
+    };
+
+    // 4) onsuccess срабатывает, когда база данных успешно открыта (и проинициализирована, если нужно).
+    openRequest.onsuccess = function(event) {
+        db = event.target.result;
+        console.log("База данных успешно открыта!");
+    };
+
+    // ==============================
+    // Кнопка, демонстрирующая транзакцию
+    // ==============================
+    document.getElementById("transactionExample").addEventListener("click", function() {
+        // a) Открываем транзакцию для хранилища "notes" в режиме "readwrite"
+        //    Транзакция группирует несколько операций над одной или несколькими таблицами.
+        const transaction = db.transaction(["notes"], "readwrite");
+
+        // b) Получаем доступ к объектному хранилищу "notes" внутри транзакции
+        const notesStore = transaction.objectStore("notes");
+
+        // c) Выполним сразу несколько операций внутри одной транзакции.
+        //    1) Добавляем первую запись.
+        notesStore.add({ id: 1, text: "Первая заметка" });
+
+        //    2) Добавляем вторую запись.
+        notesStore.add({ id: 2, text: "Вторая заметка" });
+
+        //    3) Обновим запись с id=1 (продемонстрируем, что можно делать разные операции).
+        //       Обычно для обновления используют put.
+        //       put добавляет новую запись, а если ключ уже существует – обновляет данные.
+        setTimeout(() => {
+            notesStore.put({ id: 1, text: "Обновлённая первая заметка" });
+        }, 1000);
+
+
+        // d) Обрабатываем события транзакции
+        //    oncomplete - транзакция успешно завершена
+        transaction.oncomplete = function() {
+            console.log("Транзакция завершена успешно!");
+
+            // Для наглядности прочитаем данные из "notes" после завершения транзакции.
+            const readTx = db.transaction(["notes"], "readonly");
+            const readStore = readTx.objectStore("notes");
+
+            // Получим все записи (операция getAll)
+            const getAllRequest = readStore.getAll();
+
+            getAllRequest.onsuccess = function() {
+                console.log("Текущие заметки в БД:", getAllRequest.result);
+            };
+        };
+
+        // e) onerror - если произошла какая-то ошибка во время работы транзакции
+        transaction.onerror = function(event) {
+            console.error("Ошибка в транзакции:", event);
+        };
+    });
+</script>
+</body>
+</html>
