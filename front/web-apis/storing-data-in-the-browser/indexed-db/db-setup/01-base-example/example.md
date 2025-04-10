@@ -5,24 +5,24 @@
 2. При необходимости (при первом создании или при обновлении версии) инициализируем структуру хранилища в обработчике `onupgradeneeded`.
 3. Сохраняем одну запись в объектном хранилище.
 4. Считываем эту запись по нажатию на кнопку.
-[indexdb.theory.md](../indexdb.theory.md)
+[indexdb.theory.md](../../indexdb.theory.md)
 ### Файл **index.html**
 
 ```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Пример IndexedDB</title>
+    <meta charset="UTF-8"/>
+    <title>Пример IndexedDB</title>
 </head>
 <body>
-  <h1>Минимальный пример IndexedDB</h1>
+<h1>Минимальный пример IndexedDB</h1>
 
-  <button id="save">Сохранить данные</button>
-  <button id="get">Получить данные</button>
+<button id="save">Сохранить данные</button>
+<button id="get">Получить данные</button>
 
-  <!-- Подключаем наш скрипт -->
-  <script src="index.js"></script>
+<!-- Подключаем наш скрипт -->
+<script src="index.js"></script>
 </body>
 </html>
 ```
