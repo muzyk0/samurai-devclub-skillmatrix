@@ -18,24 +18,24 @@
     const openRequest = indexedDB.open("TransactionDB", 1);
 
     // 2) Обрабатываем ошибки при открытии
-    openRequest.onerror = function (event) {
+    openRequest.onerror = function(event) {
         console.error("Ошибка при открытии базы данных:", event);
     };
 
     // 3) onupgradeneeded вызывается при создании новой БД или повышении версии.
-    openRequest.onupgradeneeded = function (event) {
+    openRequest.onupgradeneeded = function(event) {
         const db = event.target.result;
 
         // Проверяем, существует ли уже объектное хранилище с названием "notes"
         if (!db.objectStoreNames.contains("notes")) {
             // Создаём новое объектное хранилище (аналог таблицы).
             // Указываем, что ключ - это поле "id".
-            db.createObjectStore("notes", {keyPath: "id"});
+            db.createObjectStore("notes", { keyPath: "id" });
         }
     };
 
     // 4) onsuccess срабатывает, когда база данных успешно открыта (и проинициализирована, если нужно).
-    openRequest.onsuccess = function (event) {
+    openRequest.onsuccess = function(event) {
         db = event.target.result;
         console.log("База данных успешно открыта!");
     };
@@ -43,7 +43,7 @@
     // ==============================
     // Кнопка, демонстрирующая транзакцию
     // ==============================
-    document.getElementById("transactionExample").addEventListener("click", function () {
+    document.getElementById("transactionExample").addEventListener("click", async function() {
         // a) Открываем транзакцию для хранилища "notes" в режиме "readwrite"
         //    Транзакция группирует несколько операций над одной или несколькими таблицами.
         const transaction = db.transaction(["notes"], "readwrite");
@@ -53,20 +53,29 @@
 
         // c) Выполним сразу несколько операций внутри одной транзакции.
         //    1) Добавляем первую запись.
-        notesStore.add({id: 1, text: "Первая заметка"});
+        notesStore.add({ id: 1, text: "Первая заметка" });
+
+
 
         //    2) Добавляем вторую запись.
-        notesStore.add({id: 2, text: "Вторая заметка"});
+        notesStore.add({ id: 2, text: "Вторая заметка" });
 
-        //    3) Обновим запись с id=1 (продемонстрируем, что можно делать разные операции).
-        //       Обычно для обновления используют put.
-        //       put добавляет новую запись, а если ключ уже существует – обновляет данные.
-        notesStore.put({id: 1, text: "Обновлённая первая заметка"});
+
+
+        // ❌ мы не можем выполнить операцию асинхронно потом в рамках транзакции.
+
+        // setTimeout(() => {
+        //     notesStore.put({ id: 1, text: "Обновлённая первая заметка" });
+        // }, 1000);
+
+        // ❌ здесь тоже самое по сути что и в примере выше
+        await sleep(2000);
+        notesStore.put({ id: 1, text: "Обновлённая первая заметка" });
 
 
         // d) Обрабатываем события транзакции
         //    oncomplete - транзакция успешно завершена
-        transaction.oncomplete = function () {
+        transaction.oncomplete = function() {
             console.log("Транзакция завершена успешно!");
 
             // Для наглядности прочитаем данные из "notes" после завершения транзакции.
@@ -76,16 +85,19 @@
             // Получим все записи (операция getAll)
             const getAllRequest = readStore.getAll();
 
-            getAllRequest.onsuccess = function () {
+            getAllRequest.onsuccess = function() {
                 console.log("Текущие заметки в БД:", getAllRequest.result);
             };
         };
 
         // e) onerror - если произошла какая-то ошибка во время работы транзакции
-        transaction.onerror = function (event) {
+        transaction.onerror = function(event) {
             console.error("Ошибка в транзакции:", event);
         };
     });
+
+
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 </script>
 </body>
 </html>

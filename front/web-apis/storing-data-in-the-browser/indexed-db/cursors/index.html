@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>IndexedDB Cursor Пример</title>
+</head>
+<body>
+<h1>IndexedDB Cursor: Вывод всех пользователей</h1>
+
+<button id="start">Создать БД и обойти курсором</button>
+
+<script>
+    let db;
+
+    document.getElementById("start").addEventListener("click", function() {
+        const request = indexedDB.open("MyDatabase", 1);
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+
+            // Создаём хранилище users с ключом "id"
+            const store = db.createObjectStore("users", { keyPath: "id" });
+
+            console.log("База и хранилище users созданы.");
+
+            // Предварительно закинем данные
+            store.add({ id: 1, name: "Alice", age: 25 });
+            store.add({ id: 2, name: "Bob", age: 30 });
+            store.add({ id: 3, name: "Charlie", age: 22 });
+            store.add({ id: 4, name: "Diana", age: 28 });
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            console.log("База данных открыта.");
+
+            // После открытия базы вызываем обход курсором
+            readAllUsers();
+        };
+
+        request.onerror = function(event) {
+            console.error("Ошибка открытия базы данных:", event);
+        };
+    });
+
+    function readAllUsers() {
+        const transaction = db.transaction(["users"], "readonly");
+        const store = transaction.objectStore("users");
+
+        // Открываем курсор на всём хранилище
+        const cursorRequest = store.openCursor();
+
+        cursorRequest.onsuccess = async function(event) {
+            const cursor = event.target.result;
+
+            if (cursor) {
+                // cursor.key — это ключ записи
+                // cursor.value — это сам объект, который мы сохранили
+                console.log("Запись:", cursor.key, cursor.value);
+                await sleep(1000)
+                // Переходим к следующей записи
+                cursor.continue();
+            } else {
+                // Если cursor === null, значит достигли конца
+                console.log("Все записи обработаны.");
+            }
+        };
+
+        cursorRequest.onerror = function(event) {
+            console.error("Ошибка курсора:", event);
+        };
+    }
+
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+</script>
+</body>
+</html>

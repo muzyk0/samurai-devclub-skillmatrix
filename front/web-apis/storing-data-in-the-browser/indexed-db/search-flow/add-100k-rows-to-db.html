@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>IndexedDB: 100000 записей (исправленная версия)</title>
+</head>
+<body>
+<h1>IndexedDB: Массовая загрузка данных</h1>
+<button id="start">Создать БД и загрузить 100000 строк</button>
+
+<script>
+    let db;
+
+    document.getElementById("start").addEventListener("click", function() {
+        const request = indexedDB.open("BigDatabase", 1);
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+
+            const store = db.createObjectStore("records", { keyPath: "id" });
+            store.createIndex("valueIndex", "value", { unique: false });
+
+            console.log("База данных и индекс созданы");
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            console.log("База данных открыта");
+
+            addRecords();
+        };
+
+        request.onerror = function(event) {
+            console.error("Ошибка открытия базы:", event);
+        };
+    });
+
+    function addRecords() {
+        const totalRecords = 100000;
+        const batchSize = 1000; // размер одной порции
+        let currentId = 1;
+
+        function addBatch() {
+            // Открываем новую транзакцию для каждой партии
+            const transaction = db.transaction(["records"], "readwrite");
+            const store = transaction.objectStore("records");
+
+            for (let i = 0; i < batchSize && currentId <= totalRecords; i++, currentId++) {
+                store.add({
+                    id: currentId,
+                    value: "Value " + currentId,
+                    timestamp: Date.now()
+                });
+            }
+
+            transaction.oncomplete = function() {
+                console.log(`Добавлена партия до id ${currentId - 1}`);
+
+                if (currentId <= totalRecords) {
+                    setTimeout(addBatch, 0); // продолжаем следующую партию
+                } else {
+                    console.log("Все записи успешно добавлены!");
+                }
+            };
+
+            transaction.onerror = function(event) {
+                console.error("Ошибка в транзакции:", event);
+            };
+        }
+
+        addBatch();
+    }
+</script>
+</body>
+</html>
