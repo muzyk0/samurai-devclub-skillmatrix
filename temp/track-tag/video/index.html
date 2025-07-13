@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo: &lt;track&gt; с WebVTT</title>
+    <style>
+        body { font-family: sans-serif; padding: 1rem; }
+        video { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+<h1>Демонстрация &lt;track&gt;</h1>
+
+<video controls style="width: 500px; height: 500px;">
+    <!-- Замените на ваш видео-файл или URL -->
+    <source src="../track.mp3" type="audio/mp3" />
+
+    <!-- Дорожка с русскими субтитрами -->
+    <track
+            kind="subtitles"
+            src="captions.vtt"
+            srclang="ru"
+            label="Русские субтитры"
+            default
+    />
+
+    Ваш браузер не поддерживает видео с субтитрами.
+</video>
+
+<p>
+    Используйте кнопки плеера → «CC» (или «Субтитры»), чтобы включить/выключить дорожку.
+</p>
+</body>
+</html>

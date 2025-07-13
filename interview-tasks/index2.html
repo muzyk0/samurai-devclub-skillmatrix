@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<ul id="list" style="padding: 40px;"></ul>
+
+<!--<button click="hander"><img /><span>dsd</span></button>-->
+
+<div>
+    <ul  id="list"></ul>
+</div>
+
+<select name="" id="">
+    <option value="1">Minsk ❤️</option>
+    <option value="2">Batumi</option>
+</select>
+
+<script>
+    const users = [
+        {
+            id: 'njscmmaks',
+            name: 'Petya',
+        },
+        {
+            id: 'mnfdmnfdm',
+            name: 'Vasya',
+        },
+        {
+            id: 'lswlqdwa',
+            name: 'Dima',
+        },
+        {
+            id: 'jncvmdasd',
+            name: 'Olga',
+        },
+    ];
+
+    const list = document.getElementById('list');
+
+   // ul.querySelector('#23');
+
+    users.forEach((u) => {
+        const li = document.createElement('li');
+        li.style.padding = '10px';
+
+        const span = document.createElement('span');
+        span.innerText = "name: " + u.name;
+
+        li.append(span);
+
+        li.dataset.userId = u.id;
+        li.dataset.listType = 'users';
+       //li.setAttribute('list-id', 'users');
+
+        list.appendChild(li);
+    });
+
+    const handler = (e) => {
+       // e.currentTarget //
+        console.log(e.target)
+        if (e.target.tagName !== 'LI') {
+            const foundLi = e.target.closest('li');
+            if (foundLi) {
+                console.log(foundLi.dataset.userId);
+                debugger;
+                return;
+            }
+        }
+
+        console.log(e.target.dataset.userId);
+        //solution
+    };
+
+    list.addEventListener('click', handler);
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<button id="work">work</button>
+
+<script>
+    const delay = (ms) => new Promise(res => setTimeout(res, ms))
+    // don't modify
+    async function main() {
+        console.log(1);
+        await delay(1000);
+        console.log(2);
+    }
+    main();
+
+    const starDate = new Date();
+    setInterval(() => {
+        const currentDate = new Date();
+      //  (currentDate - starDate)./1000;
+    }, 1000)
+
+    work.addEventListener('click',()=> {})
+</script>
+</body>
+</html>

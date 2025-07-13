@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+
+<script>
+    class MyStorage {
+        async get(key) {
+            const data = localStorage.getItem(key);
+            if (data === 'null') return null;
+            if (data === null) throw new Error('Key not found');
+            return JSON.parse(data);
+        }
+
+        async set(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+    }
+
+    class MyStorage2 {
+        async get(key) {
+          ftech()
+            return JSON.parse(data);
+        }
+
+        async set(key, value) {
+            fetch()
+        }
+    }
+
+    const main = async () => {
+        const st = new MyStorage();
+
+        await st.set("userA", { name: "a" });
+        console.log(st.get("userA")); // {name: "a"}
+
+        await st.set("userB", null);
+        console.log(await st.get("userB")); // null
+
+        console.log(await st.get("userC")); // throw error
+    };
+
+    main();
+</script>
+</body>
+</html>

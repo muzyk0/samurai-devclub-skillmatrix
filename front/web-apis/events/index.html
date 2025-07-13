@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<div id="for-onclick">
+    <a>Link To Author</a>
+    <button id="play">Play</button>
+</div>
+
+<a href="https://chatgpt.com/c/686f895e-389c-8006-acce-2747cffa9ac5">chatgpt</a>
+
+
+<script>
+    document.querySelector('#for-onclick').addEventListener('click', function (e) {
+        e.stopPropagation();
+        console.log('e.target: ', e.target)
+        console.log('e.currentTarget: ', e.currentTarget)
+
+        if (e.target === e.currentTarget) {
+            alert('open player')
+        }
+    }, true)
+    document.querySelector('#for-onclick').addEventListener('click', function (e) {
+        console.log('second listener')
+    }, true)
+
+
+    document.querySelector('#play').addEventListener('click', function (e) {
+        console.log('play clicked')
+    })
+</script>
+</body>
+</html>
