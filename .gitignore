@@ -1,2 +1,5 @@
 .idea
+.docusaurus
+
 node_modules
+build
